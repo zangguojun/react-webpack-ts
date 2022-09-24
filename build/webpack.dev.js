@@ -12,10 +12,10 @@ module.exports = merge(baseConfig, {
     hot: true, // 开启热更新，下面react模块热替换
     historyApiFallback: true, // 解决history路由404问题
     static: {
-      directory: path.join(__dirname, "../public"), //托管静态资源public文件夹
-    }
+      directory: path.resolve(__dirname, '../public'), // 托管静态资源public文件夹
+    },
   },
   plugins: [
     new ReactRefreshWebpackPlugin(), // 添加热更新插件
-  ]
+  ],
 })

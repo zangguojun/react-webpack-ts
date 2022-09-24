@@ -1,0 +1,10 @@
+# 忽略目录
+tests/
+dist/
+demo/
+
+# 忽略文件
+**/*-min.js
+**/*.min.js
+
+package-lock.json
