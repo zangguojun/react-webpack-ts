@@ -1,17 +1,18 @@
 const os = require('os');
-const path = require('path')
-const webpack = require('webpack')
-const HtmlWebpackPlugin = require('html-webpack-plugin')
-const MiniCssExtractPlugin = require('mini-css-extract-plugin')
+const path = require('path');
+const webpack = require('webpack');
+const HtmlWebpackPlugin = require('html-webpack-plugin');
+const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const ESLintWebpackPlugin = require('eslint-webpack-plugin');
 
 const threads = os.cpus().length;
-const isDev = process.env.NODE_ENV === 'development'
+const isDev = process.env.NODE_ENV === 'development';
 
 module.exports = {
   entry: './src/index.tsx',
   output: {
-    filename: 'static/js/[name].[chunkhash:8].js',
+    filename: 'static/js/[name].[contenthash:8].js',
+    chunkFilename: 'static/js/[name].[contenthash:8].chunk.js',
     path: path.resolve(__dirname, '../dist'),
     clean: true,
     publicPath: '/', // 打包后文件的公共前缀路径
@@ -19,62 +20,57 @@ module.exports = {
   module: {
     rules: [
       {
-        test: /.(ts|tsx|jsx|js)$/,
-        use: [
+        oneOf: [
           {
-            loader: 'thread-loader',
-            options: {
-              workers: threads,
+            test: /.(ts|tsx|jsx|js)$/,
+            use: [
+              {
+                loader: 'thread-loader',
+                options: {
+                  workers: threads,
+                },
+              },
+              'babel-loader',
+            ],
+            include: path.resolve(__dirname, '../src'),
+          },
+          {
+            test: /.css$/,
+            use: [isDev ? 'style-loader' : MiniCssExtractPlugin.loader, 'css-loader', 'postcss-loader'],
+            include: path.resolve(__dirname, '../src'),
+          },
+          {
+            test: /.less$/,
+            use: [isDev ? 'style-loader' : MiniCssExtractPlugin.loader, 'css-loader', 'postcss-loader', 'less-loader'],
+            include: path.resolve(__dirname, '../src'),
+          },
+          {
+            test: /.(png|jpg|jpeg|gif|svg)$/,
+            type: 'asset',
+            parser: {
+              dataUrlCondition: {
+                maxSize: 10 * 1024,
+              },
+            },
+            generator: {
+              filename: 'static/images/[name].[contenthash:8].[ext]',
             },
           },
-          'babel-loader',
-        ],
-        include: path.resolve(__dirname, '../src'),
-      },
-      {
-        test: /.css$/,
-        include: path.resolve(__dirname, '../src'),
-        use: [
-          isDev ? 'style-loader' : MiniCssExtractPlugin.loader,
-          'css-loader',
-          'postcss-loader',
-        ],
-      },
-      {
-        test: /.s[ac]ss$/,
-        include: path.resolve(__dirname, '../src'),
-        use: [
-          isDev ? 'style-loader' : MiniCssExtractPlugin.loader,
-          'css-loader',
-          'postcss-loader',
-          'sass-loader',
-        ],
-      },
-      {
-        test: /.(png|jpg|jpeg|gif|svg)$/,
-        type: 'asset',
-        parser: {
-          dataUrlCondition: {
-            maxSize: 10 * 1024,
+          {
+            test: /.(woff2?|eot|ttf|otf)$/,
+            type: 'asset/resource',
+            generator: {
+              filename: 'static/fonts/[name].[contenthash:8].[ext]',
+            },
           },
-        },
-        generator: {
-          filename: 'static/images/[name].[contenthash:8][ext]',
-        },
-      },
-      {
-        test: /.(woff2?|eot|ttf|otf)$/,
-        type: 'asset/resource',
-        generator: {
-          filename: 'static/fonts/[name].[contenthash:8][ext]',
-        },
-      },
-      {
-        test: /.(mp4|webm|ogg|mp3|wav|flac|aac)$/,
-        type: 'asset/resource',
-        generator: {
-          filename: 'static/media/[name].[contenthash:8][ext]',
-        },
+          {
+            test: /.(mp4|webm|ogg|mp3|wav|flac|aac)$/,
+            type: 'asset/resource',
+            generator: {
+              filename: 'static/media/[name].[contenthash:8].[ext]',
+            },
+          },
+        ],
       },
     ],
   },
@@ -103,4 +99,4 @@ module.exports = {
   cache: {
     type: 'filesystem', // 使用文件缓存
   },
-}
+};

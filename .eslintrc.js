@@ -1,7 +1,3 @@
 const { getESLintConfig } = require('@iceworks/spec');
 
-module.exports = getESLintConfig('react', {
-  rules: {
-    semi: 0,
-  },
-})
+module.exports = getESLintConfig('react', {});

@@ -1,7 +1,7 @@
-const path = require('path')
-const { merge } = require('webpack-merge')
+const path = require('path');
+const { merge } = require('webpack-merge');
 const ReactRefreshWebpackPlugin = require('@pmmmwh/react-refresh-webpack-plugin');
-const baseConfig = require('./webpack.base.js')
+const baseConfig = require('./webpack.base.js');
 
 module.exports = merge(baseConfig, {
   mode: 'development',
@@ -18,4 +18,5 @@ module.exports = merge(baseConfig, {
   plugins: [
     new ReactRefreshWebpackPlugin(), // 添加热更新插件
   ],
-})
+  performance: false, // 关闭性能分析，提示速度
+});

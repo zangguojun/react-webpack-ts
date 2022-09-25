@@ -1,3 +1,7 @@
 const { getPrettierConfig } = require('@iceworks/spec');
 
-module.exports = getPrettierConfig('react');
+module.exports = getPrettierConfig('react', {
+  rules: {
+    semi: false,
+  },
+});
